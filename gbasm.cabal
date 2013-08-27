@@ -1,0 +1,74 @@
+name: gbasm
+version: 0.1
+license: MIT
+license-file: LICENSE
+author: Julian Blake Kongslie
+maintainer: jblake@jblake.org
+category: Language
+build-type: Simple
+cabal-version: >= 1.9.2
+synopsis: Assembler for Gameboy
+description:
+ This is an assembler for Gameboy and Gameboy Color devices, written
+ specifically for the pokecrystal project. The syntax and features it supports
+ are subject to change as the needs of the pokecrystal project demand.
+
+executable gbasm
+ main-is: Main.hs
+ other-modules:
+  Language.GBAsm.ByteGen
+  Language.GBAsm.CompileOps
+  Language.GBAsm.Globals
+  Language.GBAsm.IncBin
+  Language.GBAsm.Lexer
+  Language.GBAsm.Locals
+  Language.GBAsm.Math
+  Language.GBAsm.Opcodes
+  Language.GBAsm.OutputPos
+  Language.GBAsm.Parser
+  Language.GBAsm.Relative
+  Language.GBAsm.Types
+  Language.GBAsm.Unresolved
+ build-depends:
+  base,
+  bytestring,
+  cmdargs,
+  containers,
+  deepseq,
+  parsec,
+  text,
+  transformers,
+  uniplate
+ hs-source-dirs: src
+
+test-suite gbasm-tests
+ type: exitcode-stdio-1.0
+ main-is: Tests.hs
+ other-modules:
+  Language.GBAsm.ByteGen
+  Language.GBAsm.CompileOps
+  Language.GBAsm.Globals
+  Language.GBAsm.IncBin
+  Language.GBAsm.Lexer
+  Language.GBAsm.Locals
+  Language.GBAsm.Math
+  Language.GBAsm.Opcodes
+  Language.GBAsm.OutputPos
+  Language.GBAsm.Parser
+  Language.GBAsm.Relative
+  Language.GBAsm.Types
+  Language.GBAsm.Unresolved
+ build-depends:
+  base,
+  bytestring,
+  containers,
+  deepseq,
+  parsec,
+  text,
+  transformers,
+  uniplate
+ hs-source-dirs: src
+
+source-repository head
+ type: git
+ location: git://github.com/jblake/gbasm.git

@@ -1,0 +1,25 @@
+Source: gbasm
+Section: devel
+Priority: extra
+Maintainer: Julian Blake Kongslie <jblake@jblake.org>
+Build-Depends:
+ debhelper (>= 8.0.0),
+ ghc,
+ libghc-base-dev,
+ libghc-bytestring-dev,
+ libghc-cmdargs-dev,
+ libghc-containers-dev,
+ libghc-deepseq-dev,
+ libghc-parsec3-dev,
+ libghc-text-dev,
+ libghc-transformers-dev,
+ libghc-uniplate-dev
+Standards-Version: 3.9.4
+
+Package: gbasm
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Assembler for Gameboy
+ This is an assembler for Gameboy and Gameboy Color devices, written
+ specifically for the pokecrystal project. The syntax and features it supports
+ are subject to change as the needs of the pokecrystal project demand.
