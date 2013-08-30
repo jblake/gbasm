@@ -2,7 +2,6 @@
 -- Licensed under the MIT license.
 
 {-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE OverloadedStrings #-}
 
 {-# OPTIONS_GHC -Wall -Werror -fno-warn-unused-imports #-}
 
@@ -16,10 +15,10 @@ import Data.Data
 import Data.Generics.Uniplate.Operations
 import System.Console.CmdArgs.Implicit
 import System.Exit
-import qualified Text.Parsec as P
 
 import Language.GBAsm.ByteGen
 import Language.GBAsm.CompileOps
+import Language.GBAsm.File
 import Language.GBAsm.Globals
 import Language.GBAsm.IncBin
 import Language.GBAsm.Lexer
@@ -36,6 +35,7 @@ import Language.GBAsm.UnresolvedMacros
 
 data GBAsm = GBAsm
   { inputFiles :: [String]
+  , outputFile :: String
   }
   deriving (Data, Eq, Ord, Read, Show, Typeable)
 
@@ -43,29 +43,35 @@ main :: IO ()
 main = do
 
   params <- cmdArgs $ GBAsm
-    { inputFiles = [] &= args
-    }
+    { inputFiles = [] &= explicit &= args &= typFile &= help "The input files to process."
+    , outputFile = "out.gbc" &= explicit &= name "output" &= typFile &= help "The output file to create."
+    } &= summary "Assembler for GameBoy"
 
-  forM_ (inputFiles params) $ \file -> do
+  let cmdLineSP = SourcePos "<command line>" 0 0
+  let initialAST = Scope cmdLineSP [ File cmdLineSP file | file <- inputFiles params ]
 
-    fd <- readFile file
+  parsedAST <- filePass initialAST
 
-    let lexed = lexer file fd
+  compiledAST <-
+    incBinPass $!!
+    compileOpsPass $!!
+    mathPass $!!
+    unresolvedPass $!!
+    localsPass $!!
+    globalsPass $!!
+    relativePass $!!
+    outputPosPass $!!
+    mathPass $!!
+    unresolvedMacrosPass $!!
+    macrosPass $!!
+    parsedAST
 
-    case P.parse fileParser file lexed of
-      Left e -> do
-        putStrLn $ "Fatal parsing error: (this shouldn't happen!)\n\n" ++ show e
-        exitFailure
-      Right a -> do
+  case [ (p, msg) | Err (p, _) msg <- universe compiledAST ] of
+    [] -> BS.writeFile (outputFile params) $ byteGenPass compiledAST
+    errs -> do
 
-        a' <- incBinPass $!! compileOpsPass $!! mathPass $!! unresolvedPass $!! localsPass $!! globalsPass $!! relativePass $!! outputPosPass $!! mathPass $!! unresolvedMacrosPass $!! macrosPass $!! a
+      putStrLn "Unable to compile!\n"
 
-        case [ (p, msg) | Err (p, _) msg <- universe a' ] of
-          [] -> BS.writeFile (file ++ ".bin") $ byteGenPass a'
-          errs -> do
+      forM_ errs $ \(p, msg) -> putStrLn $ show (sourceName p) ++ " (line " ++ show (sourceLine p) ++ ", column " ++ show (sourceCol p) ++ "):\n  " ++ msg ++ "\n"
 
-            putStrLn $ "Unable to compile " ++ show file ++ ".\n"
-
-            forM_ errs $ \(p, msg) -> putStrLn $ show (sourceName p) ++ " (line " ++ show (sourceLine p) ++ ", column " ++ show (sourceCol p) ++ "):\n  " ++ msg ++ "\n"
-
-            exitFailure
+      exitFailure

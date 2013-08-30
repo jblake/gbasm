@@ -18,10 +18,12 @@ executable gbasm
  other-modules:
   Language.GBAsm.ByteGen
   Language.GBAsm.CompileOps
+  Language.GBAsm.File
   Language.GBAsm.Globals
   Language.GBAsm.IncBin
   Language.GBAsm.Lexer
   Language.GBAsm.Locals
+  Language.GBAsm.Macros
   Language.GBAsm.Math
   Language.GBAsm.Opcodes
   Language.GBAsm.OutputPos
@@ -29,6 +31,7 @@ executable gbasm
   Language.GBAsm.Relative
   Language.GBAsm.Types
   Language.GBAsm.Unresolved
+  Language.GBAsm.UnresolvedMacros
  build-depends:
   base,
   bytestring,
@@ -47,10 +50,12 @@ test-suite gbasm-tests
  other-modules:
   Language.GBAsm.ByteGen
   Language.GBAsm.CompileOps
+  Language.GBAsm.File
   Language.GBAsm.Globals
   Language.GBAsm.IncBin
   Language.GBAsm.Lexer
   Language.GBAsm.Locals
+  Language.GBAsm.Macros
   Language.GBAsm.Math
   Language.GBAsm.Opcodes
   Language.GBAsm.OutputPos
@@ -58,6 +63,7 @@ test-suite gbasm-tests
   Language.GBAsm.Relative
   Language.GBAsm.Types
   Language.GBAsm.Unresolved
+  Language.GBAsm.UnresolvedMacros
  build-depends:
   base,
   bytestring,

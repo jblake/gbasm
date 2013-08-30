@@ -1,8 +1,12 @@
 The phases of compilation:
 
-* (Main) Load file into a String.
-* (Lexer) Lex file into Lexemes.
-* (Parser) Parse file to SourceAST nodes.
+* (Main) Create initial AST consisting of include nodes for files passed on
+  the commandline.
+* (File) Transform file nodes:
+  * (File) Load a file into a string.
+  * (Lexer) Lex file into Lexemes.
+  * (Parser) Parse file to SourceAST nodes.
+  * (File) Insert new AST nodes into existing AST, recursively call self.
 * (Macros) Replace macro references with their definitions.
 * (UnresolvedMacros) Replace unresolved macro references with errors.
 * (Math) Perform early simplification of operands. We have to do this now
@@ -27,6 +31,9 @@ us to give the user error messages corresponding to the earliest point in the
 pipeline a problem was identified, and also to collect as many errors as
 possible before reporting to the user, instead of simply bailing after the
 first error is found.
+
+Macros can refer to other macros. Note that if there is a cyclical definition,
+the compiler will try to loop forever during expansion and eventually crash.
 
 TODO list:
 

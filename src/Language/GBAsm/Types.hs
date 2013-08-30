@@ -91,7 +91,8 @@ prettyOperand op = pr (0 :: Int) op ""
 -- |Abstract representation of the assembler input.
 -- The type parameter is to allow for decoration with an annotation type.
 data AST dec
-  = Scope !dec ![AST dec] -- ^Scoping mark.
+  = File !dec !String -- ^Parse and include a separate assembly file.
+  | Scope !dec ![AST dec] -- ^Scoping mark.
   | Macro !dec !String !Operand -- ^Macro.
   | Global !dec !String -- ^Global label.
   | Local !dec !String -- ^Local label.
@@ -107,6 +108,7 @@ data AST dec
   deriving (Data, Eq, Functor, Ord, Read, Show, Typeable)
 
 instance (NFData dec) => NFData (AST dec) where
+  rnf (File d n) = rnf d `seq` rnf n
   rnf (Scope d a) = rnf d `seq` rnf a
   rnf (Macro d l a) = rnf d `seq` rnf l `seq` rnf a
   rnf (Global d l) = rnf d `seq` rnf l

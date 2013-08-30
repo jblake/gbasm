@@ -57,6 +57,10 @@ outputPosPass theAST = evalState (pass theAST) newST
 
     pass :: SourceAST -> State ST FullAST
 
+    pass (File dec file) = do
+      pos <- gets here
+      return $ File (dec, pos) file
+
     pass (Scope dec asts) = do
       pos <- gets here
       asts' <- mapM pass asts
