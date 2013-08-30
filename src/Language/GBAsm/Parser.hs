@@ -120,6 +120,10 @@ operand = flip buildExpressionParser opTerm
     ]
   ]
 
+-- |Include external file as assembly.
+astFile :: P SourceAST
+astFile = File <$> pos <*> (kw "include" *> str <* nl)
+
 -- |Scoping marks.
 astScope :: P SourceAST
 astScope = Scope <$> pos <*> (sym '{' *> many (ast <|> astErrNotScope) <* skipMany nl <* sym '}')
@@ -159,9 +163,9 @@ astWord = Raw <$> pos <*> (kw "word" *> (mkWords <$> sepBy operand (sym ',')) <*
 astASCII :: P SourceAST
 astASCII = Raw <$> pos <*> (kw "ascii" *> (map (Abs . ord) <$> str) <* nl)
 
--- |Include external file.
+-- |Include external file as binary.
 astIncBin :: P SourceAST
-astIncBin = Inc <$> pos <*> (str <* sym ',') <*> (operand <* sym ',') <*> (operand <* nl)
+astIncBin = Inc <$> pos <*> (kw "incbin" *> str <* sym ',') <*> (operand <* sym ',') <*> (operand <* nl)
 
 -- |Nullary opcode.
 astOp0 :: P SourceAST
@@ -187,7 +191,8 @@ astErrNotScope = Err <$> pos <*> (("Unexpected lexeme during parse: " ++) . ppLe
 -- |Any AST node.
 ast :: P SourceAST
 ast = try $ skipMany nl *> (choice $ map try
-  [ astScope
+  [ astFile
+  , astScope
   , astMacro
   , astGlobal
   , astLocal
