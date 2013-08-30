@@ -35,6 +35,9 @@ first error is found.
 Macros can refer to other macros. Note that if there is a cyclical definition,
 the compiler will try to loop forever during expansion and eventually crash.
 
+Files can also include eachother in a nested fashion. Again, if there is a
+cycle, the compiler will try to loop forever and eventually crash.
+
 TODO list:
 
 * Include statements. Probably handle these in the parser?
