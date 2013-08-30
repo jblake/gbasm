@@ -9,6 +9,7 @@
 module Main
 where
 
+import Control.DeepSeq
 import Control.Monad
 import qualified Data.ByteString.Lazy as BS
 import Data.Data
@@ -57,7 +58,7 @@ main = do
         exitFailure
       Right a -> do
 
-        a' <- incBinPass $ compileOpsPass $ mathPass $ unresolvedPass $ localsPass $ globalsPass $ relativePass $ outputPosPass $ unresolvedMacrosPass $ macrosPass $ mathPass a
+        a' <- incBinPass $!! compileOpsPass $!! mathPass $!! unresolvedPass $!! localsPass $!! globalsPass $!! relativePass $!! outputPosPass $!! unresolvedMacrosPass $!! macrosPass $!! mathPass a
 
         case [ (p, msg) | Err (p, _) msg <- universe a' ] of
           [] -> BS.writeFile (file ++ ".bin") $ byteGenPass a'
