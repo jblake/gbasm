@@ -50,6 +50,10 @@ opKeyword = choice
   , kw "l"  >> return L
   ]
 
+-- |Macro reference.
+opMac :: P Operand
+opMac = Mac <$> (sym '@' *> bw)
+
 -- |Global reference.
 opGbl :: P Operand
 opGbl = Gbl <$> bw
@@ -82,6 +86,7 @@ opParen = sym '(' *> operand <* sym ')'
 opTerm :: P Operand
 opTerm = choice $ map try
   [ opKeyword
+  , opMac
   , opGbl
   , opLoc
   , opBGbl
@@ -118,6 +123,10 @@ operand = flip buildExpressionParser opTerm
 -- |Scoping marks.
 astScope :: P SourceAST
 astScope = Scope <$> pos <*> (sym '{' *> many (ast <|> astErrNotScope) <* skipMany nl <* sym '}')
+
+-- |Macro definition.
+astMacro :: P SourceAST
+astMacro = Macro <$> pos <*> (sym '@' *> bw) <*> (sym '=' *> operand <* nl)
 
 -- |Global label.
 astGlobal :: P SourceAST
@@ -179,6 +188,7 @@ astErrNotScope = Err <$> pos <*> (("Unexpected lexeme during parse: " ++) . ppLe
 ast :: P SourceAST
 ast = try $ skipMany nl *> (choice $ map try
   [ astScope
+  , astMacro
   , astGlobal
   , astLocal
   , astBank

@@ -19,7 +19,8 @@ import Data.Generics.Uniplate.Data ()
 -- |Arguments passed to an opcode.
 -- All possible operands are enumerated here; we pattern match to decide if an opcode is valid.
 data Operand
-  = Gbl !String -- ^Undefined reference to a global address.
+  = Mac !String -- ^Undefined reference to a macro.
+  | Gbl !String -- ^Undefined reference to a global address.
   | Loc !String -- ^Undefined reference to a local address.
   | BGbl !String -- ^Undefined reference to the bank of a global address.
   | BLoc !String -- ^Undefined reference to the bank of a local address.
@@ -55,6 +56,7 @@ data Operand
   deriving (Data, Eq, Ord, Read, Show, Typeable)
 
 instance NFData Operand where
+  rnf (Mac l) = rnf l
   rnf (Gbl l) = rnf l
   rnf (Loc l) = rnf l
   rnf (BGbl l) = rnf l
@@ -65,6 +67,7 @@ instance NFData Operand where
 prettyOperand :: Operand -> String
 prettyOperand op = pr (0 :: Int) op ""
   where
+    pr _ (Mac a)      =                     showChar '@' . showString a
     pr _ (Gbl a)      =                     showString a
     pr _ (Loc a)      =                     showChar '.' . showString a
     pr _ (BGbl a)     =                     showString "bank(" . showString a . showChar ')'
@@ -89,6 +92,7 @@ prettyOperand op = pr (0 :: Int) op ""
 -- The type parameter is to allow for decoration with an annotation type.
 data AST dec
   = Scope !dec ![AST dec] -- ^Scoping mark.
+  | Macro !dec !String !Operand -- ^Macro.
   | Global !dec !String -- ^Global label.
   | Local !dec !String -- ^Local label.
   | OutBank !dec !Operand -- ^Position declaration with only bank.
@@ -104,16 +108,17 @@ data AST dec
 
 instance (NFData dec) => NFData (AST dec) where
   rnf (Scope d a) = rnf d `seq` rnf a
+  rnf (Macro d l a) = rnf d `seq` rnf l `seq` rnf a
   rnf (Global d l) = rnf d `seq` rnf l
   rnf (Local d l) = rnf d `seq` rnf l
-  rnf (OutBank d _) = rnf d
-  rnf (OutPos d _ _) = rnf d
+  rnf (OutBank d b) = rnf d `seq` rnf b
+  rnf (OutPos d b a) = rnf d `seq` rnf b `seq` rnf a
   rnf (Raw d os) = rnf d `seq` rnf os
   rnf (Bin d bs) = rnf d `seq` rnf bs
-  rnf (Inc d _ _ _) = rnf d
+  rnf (Inc d f o l) = rnf d `seq` rnf f `seq` rnf o `seq` rnf l
   rnf (Op0 d o) = rnf d `seq` rnf o
-  rnf (Op1 d o _) = rnf d `seq` rnf o
-  rnf (Op2 d o _ _) = rnf d `seq` rnf o
+  rnf (Op1 d o a) = rnf d `seq` rnf o `seq` rnf a
+  rnf (Op2 d o a b) = rnf d `seq` rnf o `seq` rnf a `seq` rnf b
   rnf (Err d m) = rnf d `seq` rnf m
 
 -- |Undecorated AST.

@@ -23,6 +23,8 @@ byteGenPass theAST = execState (pass theAST) empty
 
     pass (Scope _ asts) = mapM_ pass asts
 
+    pass (Macro _ _ _) = return ()
+
     pass (Global _ _) = return ()
 
     pass (Local _ _) = return ()

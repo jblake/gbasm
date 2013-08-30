@@ -24,12 +24,14 @@ import Language.GBAsm.IncBin
 import Language.GBAsm.Lexer
 import Language.GBAsm.Locals
 import Language.GBAsm.Math
+import Language.GBAsm.Macros
 import Language.GBAsm.Opcodes
 import Language.GBAsm.OutputPos
 import Language.GBAsm.Parser
 import Language.GBAsm.Relative
 import Language.GBAsm.Types
 import Language.GBAsm.Unresolved
+import Language.GBAsm.UnresolvedMacros
 
 data GBAsm = GBAsm
   { inputFiles :: [String]
@@ -55,7 +57,7 @@ main = do
         exitFailure
       Right a -> do
 
-        a' <- incBinPass $ compileOpsPass $ mathPass $ unresolvedPass $ localsPass $ globalsPass $ relativePass $ outputPosPass $ mathPass a
+        a' <- incBinPass $ compileOpsPass $ mathPass $ unresolvedPass $ localsPass $ globalsPass $ relativePass $ outputPosPass $ unresolvedMacrosPass $ macrosPass $ mathPass a
 
         case [ (p, msg) | Err (p, _) msg <- universe a' ] of
           [] -> BS.writeFile (file ++ ".bin") $ byteGenPass a'

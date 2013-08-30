@@ -62,6 +62,10 @@ outputPosPass theAST = evalState (pass theAST) newST
       asts' <- mapM pass asts
       return $ Scope (dec, pos) asts'
 
+    pass (Macro dec label addr) = do
+      pos <- gets here
+      return $ Macro (dec, pos) label addr
+
     pass (Global dec label) = do
       pos <- gets here
       return $ Global (dec, pos) label

@@ -3,6 +3,8 @@ The phases of compilation:
 * (Main) Load file into a String.
 * (Lexer) Lex file into Lexemes.
 * (Parser) Parse file to SourceAST nodes.
+* (Macros) Replace macro references with their definitions.
+* (UnresolvedMacros) Replace unresolved macro references with errors.
 * (Math) Perform early simplification of operands. We have to do this now
   because we're about to process OutPos nodes.
 * (OutputPos) Decorate with addresses, changing to FullAST representation.
