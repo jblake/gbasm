@@ -43,8 +43,8 @@ main :: IO ()
 main = do
 
   params <- cmdArgs $ GBAsm
-    { inputFiles = [] &= explicit &= args &= typFile &= help "The input files to process."
-    , outputFile = "out.gbc" &= explicit &= name "output" &= typFile &= help "The output file to create."
+    { inputFiles = [] &= args &= typ "FILE ..."
+    , outputFile = "out.gbc" &= explicit &= name "o" &= name "output" &= typFile &= help "The output file to create."
     } &= summary "Assembler for GameBoy"
 
   let cmdLineSP = SourcePos "<command line>" 0 0
