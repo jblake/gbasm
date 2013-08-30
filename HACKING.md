@@ -40,9 +40,7 @@ cycle, the compiler will try to loop forever and eventually crash.
 
 TODO list:
 
-* Include statements. Probably handle these in the parser?
 * Collect symbol/bank information and dump a symbol file alongside the .bin.
-* Generate names for .bin files better.
 * Conditional compilation.
 * Give unique names to duplicate opcodes. Check that my opcodes are all
   correct, esp. stuff like "and a" which I have as "and a, a".
