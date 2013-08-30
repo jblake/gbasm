@@ -19,7 +19,7 @@ The phases of compilation:
 * (IncBin) Load include statements into memory as bytestrings.
 * (Main) Collect and report error nodes to the user.
 * (ByteGen) Transform FullAST nodes into a single contiguous bytestring.
-* (Main) Output the final bytestring.
+* (Main) Output the final bytestring, or report errors.
 
 Any AST nodes which cause a problem in one of these passes are replaced by Err
 nodes, which are passed through the remaining pipeline unchanged. This allows
@@ -27,3 +27,14 @@ us to give the user error messages corresponding to the earliest point in the
 pipeline a problem was identified, and also to collect as many errors as
 possible before reporting to the user, instead of simply bailing after the
 first error is found.
+
+TODO list:
+
+* Include statements. Probably handle these in the parser?
+* Collect symbol/bank information and dump a symbol file alongside the .bin.
+* Generate names for .bin files better.
+* Conditional compilation.
+* Give unique names to duplicate opcodes. Check that my opcodes are all
+  correct, esp. stuff like "and a" which I have as "and a, a".
+* Cobble together some translation rules for rgbas syntax.
+* Write tests.
