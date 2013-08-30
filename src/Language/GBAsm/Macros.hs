@@ -14,7 +14,7 @@ import Language.GBAsm.Types
 -- |First we collect all the macro definitions, then we replace duplicate
 -- definitions with errors, then we replace references.
 macrosPass :: SourceAST -> SourceAST
-macrosPass ast = transformBi resolveMac $ transform removeDups ast
+macrosPass ast = descendBi resolveMac $ transform removeDups ast
 
   where
 
@@ -25,5 +25,5 @@ macrosPass ast = transformBi resolveMac $ transform removeDups ast
     removeDups (Macro d l a) | macMap M.! l /= (d, a) = Err d $ "Duplicate definition of macro " ++ show l ++ " (previous definition on line " ++ show (sourceLine $ fst $ macMap M.! l) ++ ")"
     removeDups n = n
 
-    resolveMac (Mac l) | l `M.member` macMap = snd $ macMap M.! l
-    resolveMac o = o
+    resolveMac (Mac l) | l `M.member` macMap = resolveMac $ snd $ macMap M.! l
+    resolveMac o = descend resolveMac o
