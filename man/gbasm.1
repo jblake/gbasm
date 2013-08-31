@@ -1,10 +1,14 @@
-.TH gbasm 1 "2013-08-26" gbasm "GameBoy Assembler"
+.TH gbasm 1 "2013-08-30" gbasm "GameBoy Assembler"
 
 .SH NAME
 gbasm \- assembler for GameBoy ROMs
 
 .SH SYNOPSIS
 .B gbasm
+[
+.B -o
+.I outfile
+]
 .I infile
 \&...
 
@@ -13,3 +17,24 @@ Assembles a program written for the GameBoy processor (a Z80 variant) into a
 binary ROM file.
 .PP
 Possibly, it even works.
+
+.SH OPTIONS
+
+.I infile
+\&...
+.RS
+Set the input files to assemble. They are assembled as if included in the order
+specified to produce a single output file.
+.RE
+
+.PP
+.B -o
+.I outfile
+.br
+.B --output
+.I outfile
+.RS
+Set the output file for the resulting assembled program. Defaults to
+.B out.gbc
+if not specified.
+.RE
