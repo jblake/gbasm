@@ -40,6 +40,7 @@ opKeyword = choice
   , kw "hl" >> return HL
   , kw "sp" >> return SP
   , kw "nz" >> return NZ
+  , kw "nc" >> return NC
   , kw "z"  >> return Z
   , kw "a"  >> return A
   , kw "b"  >> return B
