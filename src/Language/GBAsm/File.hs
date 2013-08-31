@@ -16,7 +16,7 @@ import Language.GBAsm.Types
 
 -- This is a top-down IO transformation which finds File nodes, reads the
 -- referenced file, lexes, parses, and substitutes in the resulting AST.
-filePass :: SourceAST -> IO SourceAST filePass (File d file) = flip catch (\e
+filePass :: SourceAST -> IO SourceAST
 filePass (File d file) = flip catch (\e -> return $ Err d $ "Could not load file " ++ show file ++ ": " ++ show (e :: SomeException)) $ do
 
   fileData <- readFile file
