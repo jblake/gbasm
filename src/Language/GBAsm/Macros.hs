@@ -25,5 +25,8 @@ macrosPass ast = descendBi resolveMac $ transform removeDups ast
     removeDups (Macro d l a) | macMap M.! l /= (d, a) = Err d $ "Duplicate definition of macro " ++ show l ++ " (previous definition on line " ++ show (sourceLine $ fst $ macMap M.! l) ++ ")"
     removeDups n = n
 
+    -- Note that we're doing a top-down replacement instead of the usual
+    -- bottom-up transformation. That's because we need to continue to process
+    -- the bodies of the macros, incase there are nested references.
     resolveMac (Mac l) | l `M.member` macMap = resolveMac $ snd $ macMap M.! l
     resolveMac o = descend resolveMac o

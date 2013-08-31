@@ -52,6 +52,7 @@ main = do
 
   parsedAST <- filePass initialAST
 
+  -- Note that these passes are lasted from last to first.
   compiledAST <-
     incBinPass $!!
     compileOpsPass $!!
