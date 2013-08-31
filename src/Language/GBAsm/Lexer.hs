@@ -102,7 +102,7 @@ lexer name = rl $ initialPos name
   where
 
     -- End-of-input.
-    rl sp ""                          = LexDone sp
+    rl sp ""                          = LexIs NL sp $ LexDone sp
 
     -- Newlines.
     rl sp ('\n':s)                    = let
