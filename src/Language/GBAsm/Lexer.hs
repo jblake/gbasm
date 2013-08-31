@@ -170,7 +170,7 @@ lexer name = rl $ initialPos name
 
     -- Barewords.
     rl sp (c:s)    | isAlpha c        = let
-                                        cs = takeWhile (\c -> c == '_' || isAlphaNum c) s
+                                        cs = takeWhile (\x -> x == '_' || isAlphaNum x) s
                                         s' = drop (length cs) s
                                         np = updatePosString sp $ c:cs
                                         in LexIs (W $ c:cs) sp $ rl np s'
