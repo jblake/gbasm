@@ -40,6 +40,9 @@ cycle, the compiler will try to loop forever and eventually crash.
 
 TODO list:
 
+* Opcode macros in addition to operand macros.
+* Parameterized macros.
+* Explicit "this address", "next address", and "this bank" operands.
 * Collect symbol/bank information and dump a symbol file alongside the .bin.
 * Conditional compilation.
 * Give unique names to duplicate opcodes. Check that my opcodes are all
